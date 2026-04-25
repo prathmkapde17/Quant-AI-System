@@ -1,0 +1,77 @@
+# =============================================================================
+# Quant Trading System — Application Configuration
+# =============================================================================
+
+app:
+  name: "quant-trading-system"
+  version: "0.1.0"
+  log_level: "INFO"            # DEBUG | INFO | WARNING | ERROR
+  timezone: "UTC"              # Internal processing timezone
+
+# --- Database (TimescaleDB) ---
+database:
+  host: "localhost"
+  port: 5432
+  name: "quantdb"
+  user: "quant"
+  # password loaded from env: DB_PASSWORD
+  min_connections: 5
+  max_connections: 20
+  command_timeout: 60          # seconds
+
+# --- Redis ---
+redis:
+  host: "localhost"
+  port: 6379
+  db: 0
+  max_connections: 20
+  stream_max_len: 10000        # Max messages per stream before trimming
+  decode_responses: true
+
+# --- Angel One SmartAPI ---
+angel_one:
+  # Credentials loaded from env: ANGEL_ONE_CLIENT_ID, ANGEL_ONE_PASSWORD,
+  #                               ANGEL_ONE_API_KEY, ANGEL_ONE_TOTP_SECRET
+  rate_limit_per_second: 3
+  historical_candles_per_request: 8000
+  websocket_reconnect_delay: 5    # seconds
+  websocket_max_reconnect: 50
+  master_contract_url: "https://margincalculator.angelbroking.com/OpenAPI_File/files/OpenAPIScripMaster.json"
+
+# --- Binance Futures ---
+binance:
+  # Credentials loaded from env: BINANCE_API_KEY, BINANCE_API_SECRET
+  futures_base_url: "https://fapi.binance.com"
+  rate_limit_weight_per_minute: 1200
+  klines_per_request: 1500
+  websocket_reconnect_delay: 3    # seconds
+  websocket_max_reconnect: 100
+  testnet: false                   # Set true for paper trading
+
+# --- Ingestion ---
+ingestion:
+  historical:
+    default_lookback_days_intraday: 730   # 2 years for 1m data
+    default_lookback_days_daily: 3650     # 10 years for daily data
+    batch_size: 500                        # Records per DB insert batch
+    max_concurrent_fetches: 3              # Per exchange
+    retry_max_attempts: 5
+    retry_base_delay: 2                    # seconds (exponential backoff)
+  live:
+    db_flush_interval: 5              # seconds — flush buffered ticks to DB
+    db_flush_batch_size: 1000         # Max ticks per flush
+    heartbeat_interval: 30            # seconds — check connection health
+    stale_data_threshold: 120         # seconds — alert if no data received
+  scheduler:
+    daily_backfill_time: "15:45"      # IST — after Indian market close (3:30 PM)
+    instrument_refresh_hours: 6
+    health_check_seconds: 60
+    compression_day: "sunday"
+    compression_time: "02:00"
+
+# --- Data Cleaning ---
+cleaning:
+  max_gap_candles_to_fill: 5          # Forward-fill gaps up to this many candles
+  outlier_zscore_threshold: 4.0       # Flag returns with z-score above this
+  equity_max_single_candle_pct: 0.10  # 10% — flag single-candle moves above this
+  crypto_max_single_candle_pct: 0.20  # 20% — crypto is more volatile

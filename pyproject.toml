@@ -1,0 +1,72 @@
+[project]
+name = "quant-trading-system"
+version = "0.1.0"
+description = "Multi-asset quantitative trading system — data pipeline"
+requires-python = ">=3.12"
+readme = "README.md"
+
+dependencies = [
+    # --- Exchange Connectors ---
+    "smartapi-python>=1.4.0",       # Angel One SmartAPI
+    "python-binance>=1.0.19",       # Binance Futures
+    "yfinance>=0.2.30",             # Historical fallback
+
+    # --- Database ---
+    "asyncpg>=0.29.0",              # Async PostgreSQL driver
+    "redis[hiredis]>=5.0.0",        # Redis with C parser for speed
+
+    # --- Data & Config ---
+    "pydantic>=2.5.0",              # Data models
+    "pydantic-settings>=2.1.0",     # Settings management
+    "pyyaml>=6.0",                  # YAML config parsing
+    "pandas>=2.1.0",                # DataFrames
+    "numpy>=1.26.0",                # Numerical operations
+
+    # --- Async & Networking ---
+    "aiohttp>=3.9.0",               # Async HTTP client
+    "websockets>=12.0",             # WebSocket client
+
+    # --- Scheduling & Logging ---
+    "apscheduler>=3.10.0",          # Task scheduling
+    "structlog>=23.2.0",            # Structured logging
+
+    # --- Utilities ---
+    "python-dotenv>=1.0.0",         # .env file loading
+    "rich>=13.0.0",                 # Pretty console output
+    "pyotp>=2.9.0",                 # TOTP for Angel One login
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.23.0",
+    "pytest-cov>=4.1.0",
+    "ruff>=0.1.0",
+    "mypy>=1.7.0",
+]
+
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+markers = [
+    "integration: marks tests requiring Docker services",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
