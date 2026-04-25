@@ -29,10 +29,11 @@ Antigravity is designed for institutional-level data ingestion, feature engineer
 - **Hypertable Features**: Automated 3-month retention policies for high-speed feature retrieval.
 
 ### 🧪 Phase 3: Backtesting & Research Dashboard
-- **Vectorized Engine**: Ultra-fast backtesting using NumPy/Pandas matrices (test 50k+ bars in <100ms).
-- **Research Dashboard**: A premium, glassmorphism-inspired React dashboard for alpha research.
-- **Alpha Analytics**: Real-time calculation of Sharpe Ratio, Max Drawdown, Win Rate, and Total Return.
-- **Equity Visualization**: High-fidelity area charts for performance analysis.
+- **High-Fidelity Engine**: Loop-based simulation accounting for slippage, commissions, and bar-by-bar fills.
+- **Walk-Forward Analysis**: Robust OOS (Out-of-Sample) validation with anchored/rolling window support.
+- **Advanced Metrics**: Sortino Ratio, Calmar Ratio, Profit Factor, and Recovery Factor.
+- **Research Dashboard**: A premium, glassmorphism-inspired React dashboard (Tailwind v4) for alpha research.
+- **Equity Visualization**: High-fidelity area charts and trade-log visualization.
 
 ### 🛡️ System Hardening
 - **Memory Circuit Breaker**: Configurable buffer limits to prevent OOM during DB latency.

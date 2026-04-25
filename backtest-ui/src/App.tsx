@@ -26,14 +26,26 @@ import {
 } from 'recharts';
 
 // Types
-interface BacktestResult {
+interface BacktestMetrics {
   total_return_pct: number;
-  annualized_return_pct: number;
+  cagr_pct: number;
   max_drawdown_pct: number;
   sharpe_ratio: number;
+  sortino_ratio: number;
+  calmar_ratio: number;
   win_rate_pct: number;
+  profit_factor: number;
   total_trades: number;
+  avg_win_pct: number;
+  avg_loss_pct: number;
+  recovery_factor: number;
+}
+
+interface BacktestResponse {
+  id: string;
+  metrics: BacktestMetrics;
   equity_curve: number[];
+  trades: any[];
 }
 
 const API_BASE = "http://localhost:8000";
@@ -43,7 +55,7 @@ function App() {
   const [selectedSymbol, setSelectedSymbol] = useState("BTCUSDT");
   const [strategy, setStrategy] = useState("rsi_mean_reversion");
   const [params, setParams] = useState({ oversold: 30, overbought: 70 });
-  const [result, setResult] = useState<BacktestResult | null>(null);
+  const [result, setResult] = useState<BacktestResponse | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -132,6 +144,7 @@ function App() {
                 >
                   <option value="rsi_mean_reversion">RSI Mean Reversion</option>
                   <option value="ema_cross">EMA Cross Trend</option>
+                  <option value="macd_cross">MACD Crossover</option>
                 </select>
               </div>
 
@@ -202,33 +215,33 @@ function App() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
             <StatsCard 
               label="Cumulative Return" 
-              value={result?.total_return_pct} 
+              value={result?.metrics.total_return_pct} 
               format="%" 
-              trend={result?.total_return_pct}
+              trend={result?.metrics.total_return_pct}
               icon={<TrendingUp />}
             />
             <StatsCard 
-              label="Ann. Return" 
-              value={result?.annualized_return_pct} 
+              label="Ann. Return (CAGR)" 
+              value={result?.metrics.cagr_pct} 
               format="%" 
               icon={<Zap />}
             />
             <StatsCard 
-              label="Drawdown" 
-              value={result?.max_drawdown_pct} 
+              label="Max Drawdown" 
+              value={result?.metrics.max_drawdown_pct} 
               format="%" 
               isNegative 
               icon={<ArrowDownCircle />}
             />
             <StatsCard 
               label="Sharpe Ratio" 
-              value={result?.sharpe_ratio} 
+              value={result?.metrics.sharpe_ratio} 
               format="" 
               icon={<BarChart3 />}
             />
             <StatsCard 
               label="Win Rate" 
-              value={result?.win_rate_pct} 
+              value={result?.metrics.win_rate_pct} 
               format="%" 
               icon={<Activity />}
             />
